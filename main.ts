@@ -87,6 +87,12 @@ interface TicketStatus {
   current_status: string;
 }
 
+function addDays(date, days) {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
 router.get("/", (ctx) => {
   ctx.response.body = "Hello world";
 });
@@ -99,6 +105,12 @@ router.get("/pnr/:pnr", async (ctx) => {
 
   if (response.status === 200) {
     const { body }: { body: PNRInfo } = await response.json();
+    const date = new Date(body.pulse_data.journey_date);
+    const format = Intl.DateTimeFormat("en-IN", {
+      weekday: "short",
+      month: "short",
+      day: "2-digit",
+    });
     ctx.response.body = {
       pnr: body.pnr_number,
       class: body.class,
@@ -110,6 +122,22 @@ router.get("/pnr/:pnr", async (ctx) => {
         status: pax.currentStatus,
         seatNo: pax.currentBerthNo,
       })),
+      from: {
+        code: body.boarding_station.station_code,
+        name: body.boarding_station.station_name,
+        time: body.boarding_station.departure_time,
+        date: format.format(
+          addDays(date, +body.boarding_station.day_count - 1)
+        ),
+      },
+      to: {
+        code: body.reservation_upto.station_code,
+        name: body.reservation_upto.station_name,
+        time: body.reservation_upto.arrival_time,
+        date: format.format(
+          addDays(date, +body.reservation_upto.day_count - 1)
+        ),
+      },
     };
   }
 });
