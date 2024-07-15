@@ -105,7 +105,9 @@ router.get("/pnr/:pnr", async (ctx) => {
 
   if (response.status === 200) {
     const { body }: { body: PNRInfo } = await response.json();
-    const date = new Date(body.pulse_data.journey_date);
+    const date = new Date(
+      body.pulse_data.journey_date.split("/").reverse().join("/")
+    );
     const format = Intl.DateTimeFormat("en-IN", {
       weekday: "short",
       month: "short",
