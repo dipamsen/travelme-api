@@ -121,6 +121,7 @@ router.get("/pnr/:pnr", async (ctx) => {
       seats: body.pax_info.map((pax) => ({
         status: pax.currentStatus,
         seatNo: pax.currentBerthNo,
+        coach: pax.currentCoachId,
       })),
       from: {
         code: body.boarding_station.station_code,
