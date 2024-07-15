@@ -1,4 +1,4 @@
-# MeTravel
+# TravelMe
 
 General purpose API endpoints for travel related data.
 
